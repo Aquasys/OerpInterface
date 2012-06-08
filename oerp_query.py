@@ -12,7 +12,7 @@ class OerpQueryManager:
         self.client = client
 
 
-    def filter(self, _module=None, **kwargs):
+    def filter(self, _module, **kwargs):
         """
         Can return several objects
         Search criteria are in the kwargs 
@@ -39,7 +39,7 @@ class OerpQueryManager:
             return None
 
 
-    def get(self, pk=None, _module=None):
+    def get(self, pk, _module):
         """
         Returns only the first object
         Look by id
@@ -53,29 +53,69 @@ class OerpQueryManager:
             if not isinstance(objects, (list)):
                 result = OerpModel(_module, objects)
                 return result
-            else
+            else:
                 return None
 
         else:
             return None
 
 
-    def create(self, oerp_object)):
+    def create(self, oerp_objects):
         """
-        Basic create
+        Basic create enhanced, you can create several at the same time
+        Name of the module is store on the __name__ of the object
+        Returns the id of the newly created objects
         """
-        print 'create'
+        id_list = []
+
+        if len(oerp_objects) == 0:
+            return None
+
+        for oerp_object in oerp_objects:
+            new_id = self.client.proxy.execute(self.client.db, self.client.uid, self.client.password, 
+            oerp_object.object.__name__, 'create', oerp_object.to_dict())
+
+            id_list.append(new_id)
+
+        return id_list
 
 
-    def update(self):
+    def update(self, oerp_objects):
         """
         Update an object
+        Works the same as create
+        Returns True if updated, False otherwise
         """
-        print 'update'
+        success_list = []
+
+        if len(oerp_objects) == 0:
+            return None
+
+        for oerp_object in oerp_objects:
+            result = self.client.proxy.execute(self.client.db, self.client.uid, self.client.password, 
+            oerp_object.object.__name__, 'write', oerp_object.object.id, oerp_object.to_dict())
+
+            success_list.append(result)
+
+        return success_list
 
 
-    def delete(self):
+    def delete(self, oerp_objects):
         """
         Delete the record
+        Works the same as create/update
+        Returns true if it worked (returns true if the object doesn't exist too)
         """
-        print 'delete'
+        success_list = []
+
+        if len(oerp_objects) == 0:
+            return None
+
+        id_list = []
+        for oerp_object in oerp_objects:
+            id_list.append(oerp_object.object.id)
+            
+        result = self.client.proxy.execute(self.client.db, self.client.uid, self.client.password, 
+        oerp_object.object.__name__, 'unlink', id_list)
+
+        return result

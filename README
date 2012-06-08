@@ -1,0 +1,9 @@
+Simple interface to connect to an OpenERP database using XMLRPC (might be replaced with JSONRPC in the next version).
+
+XML-RPC requests have been simplified to look more like django queries (very basic though, no OR, __startswith etc), 
+extending it should be quite easy.
+
+To use it :
+ - Create an instance of OerpClient with the required informations
+ - QueryManager is used to do the CRUD operations provided by OpenERP
+ - OerpModel is the container for the openerp data and CUD operations needs to provide one to the query manager

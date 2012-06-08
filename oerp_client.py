@@ -38,34 +38,6 @@ class OerpClient:
         self.proxy = proxy
 
 
-    def search(self, module, args):
-        """
-        Returns list of ids satisfying the args
-        """
-        return self.proxy.execute(self.db, self.uid, self.password, module, 'search', args)
-
-
-    def create(self):
-        partner = {
-           'name': 'Fabien Pinckaers'
-        }
-        class Partner:
-            def __init__(self):
-                self.name = "oulalala"
-        partner = Partner()
-        partner_id = self.proxy.execute(self.db, self.uid, self.password, 'res.partner', 'create', partner)
-        print partner_id
-
-
-    def select(self):
-        fields = ['name'] #fields to read
-        ids = [4, 5]
-        data = self.proxy.execute(self.db, self.uid, self.password, 'res.partner', 'read', ids, fields)
-        machin = OerpModel('res.partner', data[0])
-
-        print machin.object
-
-
 username = 'admin'
 password = 'pass'
 db = 'dev'
@@ -74,5 +46,13 @@ url = 'http://localhost:8069/xmlrpc/'
 client = OerpClient(username, password, db, url)
 query_manager = OerpQueryManager(client)
 #partners = query_manager.filter(name="Machin", _module="res.partner")
-partner = query_manager.get(2, _module="res.partner")
-print partner.object.name
+#partner = query_manager.get(2, _module="res.partner")
+partner = {
+   'name': 'Vincent Prouillet'
+}
+model = OerpModel('res.partner', partner)
+model2 = OerpModel('res.partner', partner)
+testing = [model, model2]
+
+#test = query_manager.delete(testing)
+#print test
